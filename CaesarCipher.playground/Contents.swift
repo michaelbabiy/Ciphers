@@ -9,7 +9,7 @@ class Cipher
         let text = text.lowercaseString
         let key = self.key(keyword)
         let alphabet = self.alphabet(key)
-        let map = self.encryptionMap(alphabet)
+        let map = self.map(alphabet).encryption
         
         var encrypted = String()
         
@@ -28,7 +28,7 @@ class Cipher
         let text = text.lowercaseString
         let key = self.key(keyword)
         let alphabet = self.alphabet(key)
-        let map = self.decryptionMap(alphabet)
+        let map = self.map(alphabet).decryption
         
         var decrypted = String()
         
@@ -61,24 +61,17 @@ class Cipher
     
     // MARK: Encryption / decryption map based on the key.
     
-    private func encryptionMap(reversed: [String]) -> [String : String]
+    private func map(reversed: [String]) -> (encryption: [String : String], decryption: [String : String])
     {
-        var map = [String : String]()
+        var encryption = [String : String]()
+        var decryption = [String : String]()
+        
         for (index, letter) in reversed.enumerate() {
-            map[self.alphabet[index]] = letter
+            encryption[self.alphabet[index]] = letter
+            decryption[letter] = self.alphabet[index]
         }
         
-        return map
-    }
-    
-    private func decryptionMap(reversed: [String]) -> [String : String]
-    {
-        var map = [String : String]()
-        for (index, letter) in reversed.enumerate() {
-            map[letter] = self.alphabet[index]
-        }
-        
-        return map
+        return (encryption: encryption, decryption: decryption)
     }
     
     private let alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
