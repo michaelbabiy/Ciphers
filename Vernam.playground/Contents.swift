@@ -69,7 +69,7 @@ class Cipher
         var key = [Int]()
         
         for _ in 0...count.predecessor() {
-            key.append(Int(arc4random() % 25))
+            key.append(Int(arc4random() % 26))
         }
         
         return key
