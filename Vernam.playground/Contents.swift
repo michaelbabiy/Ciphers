@@ -9,12 +9,12 @@ class Cipher
     
     func encrypt(text: String) -> (text: String, key: [Int])
     {
-        let text = text.lowercaseString
-        let key = self.key(text.characters.count)
+        let text = text.lowercased()
+        let key = self.key(count: text.characters.count)
         let map = self.map()
         var output = String()
         
-        for (index, character) in text.characters.enumerate() {
+        for (index, character) in text.characters.enumerated() {
             if character == " " {
                 output.append(character)
             }
@@ -24,22 +24,22 @@ class Cipher
                     let keyIndex = key[index]
                     let outputIndex = (letterIndex + keyIndex + map.lastCharacterIndex) % map.lastCharacterIndex
                     if let outputCharacter = map.reversed[outputIndex] {
-                        output.appendContentsOf(outputCharacter)
+                        output.append(outputCharacter)
                     }
                 }
             }
         }
         
-        return (text: output.uppercaseString, key: key)
+        return (text: output.uppercased(), key: key)
     }
     
     func decrypt(text: String, key:[Int]) -> String
     {
-        let text = text.lowercaseString
+        let text = text.lowercased()
         let map = self.map()
         var output = String()
         
-        for (index, character) in text.characters.enumerate() {
+        for (index, character) in text.characters.enumerated() {
             
             if character == " " {
                 output.append(character)
@@ -50,7 +50,7 @@ class Cipher
                     let keyIndex = key[index]
                     let outputIndex = (letterIndex - keyIndex + map.lastCharacterIndex) % map.lastCharacterIndex
                     if let outputCharacter = map.reversed[outputIndex] {
-                        output.appendContentsOf(outputCharacter)
+                        output.append(outputCharacter)
                     }
                 }
             }
@@ -68,7 +68,7 @@ class Cipher
     {
         var key = [Int]()
         
-        for _ in 0...count.predecessor() {
+        for _ in 0..<count {
             key.append(Int(arc4random() % 26))
         }
         
@@ -81,7 +81,7 @@ class Cipher
         var reversed = [Int : String]()
         var lastCharacterIndex = 0
         
-        for (index, letter) in self.alphabet.enumerate() {
+        for (index, letter) in self.alphabet.enumerated() {
             forward[letter] = index
             reversed[index] = letter
             lastCharacterIndex = index
@@ -92,8 +92,8 @@ class Cipher
 }
 
 let text = "The day you think there is no improvements to be made is a sad one for any player." // L. Messi
-let encrypted = Cipher.shared.encrypt(text)
-let decrypted = Cipher.shared.decrypt(encrypted.text, key: encrypted.key)
+let encrypted = Cipher.shared.encrypt(text: text)
+let decrypted = Cipher.shared.decrypt(text: encrypted.text, key: encrypted.key)
 
 print(" Original: \(text)")
 print("Encrypted: \(encrypted.text)")

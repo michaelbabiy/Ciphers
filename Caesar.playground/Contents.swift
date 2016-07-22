@@ -6,39 +6,39 @@ class Cipher
 {
     func encrypt(text: String, keyword: String) -> String
     {
-        let text = text.lowercaseString
-        let key = self.key(keyword)
-        let alphabet = self.alphabet(key)
-        let map = self.map(alphabet).encryption
+        let text = text.lowercased()
+        let key = self.key(keyword: keyword)
+        let alphabet = self.alphabet(key: key)
+        let map = self.map(reversed: alphabet).encryption
         
         var encrypted = String()
         
         for character in text.characters {
-            if character == " " { encrypted.appendContentsOf(":") }
+            if character == " " { encrypted.append(":") }
             if let string = map[String(character)] {
-                encrypted.appendContentsOf(string)
+                encrypted.append(string)
             }
         }
         
-        return encrypted.uppercaseString
+        return encrypted.uppercased()
     }
     
     func decrypt(text: String, keyword: String) -> String
     {
-        let text = text.lowercaseString
-        let key = self.key(keyword)
-        let alphabet = self.alphabet(key)
-        let map = self.map(alphabet).decryption
+        let text = text.lowercased()
+        let key = self.key(keyword: keyword)
+        let alphabet = self.alphabet(key: key)
+        let map = self.map(reversed: alphabet).decryption
         
         var decrypted = String()
         
         for character in text.characters {
             if character == ":" {
-                decrypted.appendContentsOf(" ")
+                decrypted.append(" ")
             }
             
             else if let string = map[String(character)] {
-                decrypted.appendContentsOf(string)
+                decrypted.append(string)
             }
         }
         
@@ -51,12 +51,12 @@ class Cipher
     {
         var string = String()
         for character in keyword.characters {
-            if !string.containsString(String(character)) {
+            if !string.contains(String(character)) {
                 string.append(character)
             }
         }
         
-        return string.lowercaseString
+        return string.lowercased()
     }
     
     // MARK: Encryption / decryption map based on the key.
@@ -66,7 +66,7 @@ class Cipher
         var encryption = [String : String]()
         var decryption = [String : String]()
         
-        for (index, letter) in reversed.enumerate() {
+        for (index, letter) in reversed.enumerated() {
             encryption[self.alphabet[index]] = letter
             decryption[letter] = self.alphabet[index]
         }
@@ -82,35 +82,35 @@ class Cipher
     {
         var alphabet = self.alphabet
         
-        for (idx, char) in key.characters.enumerate() {
-            if let index = alphabet.indexOf(String(char)) {
-                let element = alphabet.removeAtIndex(index)
-                alphabet.insert(element, atIndex: idx)
+        for (idx, char) in key.characters.enumerated() {
+            if let index = alphabet.index(of: String(char)) {
+                let element = alphabet.remove(at: index)
+                alphabet.insert(element, at: idx)
             }
         }
         
-        return self.reversed(alphabet)
+        return self.reversed(alphabet: alphabet)
     }
     
     private func reversed(alphabet: [String]) -> [String]
     {
         var alphabet = alphabet
         var startIndex = alphabet.startIndex
-        var endIndex = alphabet.endIndex.predecessor()
+        var endIndex = alphabet.endIndex - 1
         
         for _ in 0..<alphabet.count / 2 {
             
             let sString = alphabet[startIndex]
             let eString = alphabet[endIndex]
             
-            alphabet.removeAtIndex(startIndex)
-            alphabet.insert(eString, atIndex: startIndex)
+            alphabet.remove(at: startIndex)
+            alphabet.insert(eString, at: startIndex)
             
-            alphabet.removeAtIndex(endIndex)
-            alphabet.insert(sString, atIndex: endIndex)
+            alphabet.remove(at: endIndex)
+            alphabet.insert(sString, at: endIndex)
             
-            startIndex = startIndex.successor()
-            endIndex = endIndex.predecessor()
+            startIndex = startIndex + 1
+            endIndex = endIndex - 1
         }
         
         return alphabet
@@ -118,9 +118,8 @@ class Cipher
 }
 
 let cipher = Cipher()
-let encrypted = cipher.encrypt("When can I buy new shoes, honey?", keyword: "shoes")
+let encrypted = cipher.encrypt(text: "When can I buy new shoes, honey?", keyword: "shoes")
 print(encrypted)
 
-let decrypted = cipher.decrypt("ERVK:XZK:Q:YBH:KVE:DRJVD:RJKVH", keyword: "shoes")
-print("\n\(decrypted)")
-
+let decrypted = cipher.decrypt(text: "ERVK:XZK:Q:YBH:KVE:DRJVD:RJKVH", keyword: "shoes")
+print(decrypted)
